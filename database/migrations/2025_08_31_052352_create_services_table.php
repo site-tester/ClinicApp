@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('duration_in_minutes')->default(30); // e.g., 30, 60
+            $table->integer('duration_in_minutes')->nullable()->default(30); // e.g., 30, 60
             $table->decimal('price', 8, 2)->nullable();
             $table->string('type'); // e.g., package, single
             $table->timestamps();

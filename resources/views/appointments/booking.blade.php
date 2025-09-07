@@ -1,6 +1,12 @@
-@extends(backpack_view('blank'))
-
-@section('css')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Book Appointment - FRYDT Lying-in Clinic</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         .step-indicator {
             display: flex;
@@ -46,7 +52,7 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
         .time-slot {
@@ -133,25 +139,37 @@
             margin-bottom: 20px;
         }
     </style>
-@endsection
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-hospital"></i> FRYDT Lying-in Clinic</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ route('backpack.dashboard') }}">Dashboard</a>
+                <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <form id="logout-form" action="{{ route('backpack.auth.logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
+        </div>
+    </nav>
 
-@section('content')
     <div class="container my-5">
         <div class="booking-form">
             <h2 class="text-center mb-4"><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
 
             <!-- Success/Error Messages -->
-            @if (session('success'))
+            @if(session('success'))
                 <div class="alert alert-success alert-custom">
                     <i class="fas fa-check-circle"></i> {{ session('success') }}
                 </div>
             @endif
 
-            @if ($errors->any())
+            @if($errors->any())
                 <div class="alert alert-danger alert-custom">
                     <i class="fas fa-exclamation-triangle"></i>
                     <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
+                        @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
@@ -180,7 +198,7 @@
 
             <form id="appointmentForm" method="POST" action="{{ route('appointment.booking.store') }}">
                 @csrf
-                <input type="hidden" name="patient_id" value="{{ Auth::id() }}">
+                <input type="hidden" name="patient_id" value="{{ auth()->user()->id }}">
                 <input type="hidden" id="selected_service" name="service_id">
                 <input type="hidden" id="selected_employee" name="employee_id">
                 <input type="hidden" id="selected_date" name="appointment_date">
@@ -191,19 +209,17 @@
                     <h4 class="mb-3">Select a Service</h4>
                     <div id="services-container">
                         @forelse($services as $service)
-                            <div class="service-card" data-service-id="{{ $service->id }}"
-                                data-duration="{{ $service->duration_in_minutes }}">
+                            <div class="service-card" data-service-id="{{ $service->id }}" data-duration="{{ $service->duration_in_minutes }}">
                                 <div class="row align-items-center">
                                     <div class="col-md-8">
                                         <h5 class="mb-1">{{ $service->name }}</h5>
-                                        <p class="text-muted mb-1">{{ $service->description ?? 'No description available' }}
-                                        </p>
+                                        <p class="text-muted mb-1">{{ $service->description ?? 'No description available' }}</p>
                                         <small class="text-info">
                                             <i class="fas fa-clock"></i> {{ $service->duration_in_minutes }} minutes
                                         </small>
                                     </div>
                                     <div class="col-md-4 text-end">
-                                        @if ($service->price)
+                                        @if($service->price)
                                             <h5 class="text-primary mb-0">₱{{ number_format($service->price, 2) }}</h5>
                                         @else
                                             <h5 class="text-muted mb-0">Price on consultation</h5>
@@ -227,8 +243,8 @@
                         <div class="col-md-6">
                             <label for="appointment_date" class="form-label">Appointment Date</label>
                             <input type="date" class="form-control" id="appointment_date"
-                                min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                max="{{ date('Y-m-d', strtotime('+30 days')) }}">
+                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                   max="{{ date('Y-m-d', strtotime('+30 days')) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Available Time Slots</label>
@@ -261,8 +277,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h6>Patient Information</h6>
-                                    <p><strong>Name:</strong> {{ Auth::user() }}</p>
-                                    <p><strong>Email:</strong> {{ Auth::user() }}</p>
+                                    <p><strong>Name:</strong> {{ auth()->user()->name }}</p>
+                                    <p><strong>Email:</strong> {{ auth()->user()->email }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Appointment Details</h6>
@@ -277,7 +293,7 @@
                             <div class="mt-3">
                                 <label for="patient_notes" class="form-label">Additional Notes (Optional)</label>
                                 <textarea class="form-control" id="patient_notes" name="patient_notes" rows="3"
-                                    placeholder="Any specific concerns or notes for your appointment..."></textarea>
+                                          placeholder="Any specific concerns or notes for your appointment..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -285,8 +301,7 @@
 
                 <!-- Navigation Buttons -->
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)"
-                        style="display: none;">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">
                         <i class="fas fa-arrow-left"></i> Previous
                     </button>
                     <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
@@ -299,12 +314,8 @@
             </form>
         </div>
     </div>
-@endsection
 
-@section('after_scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         let currentStep = 1;
         const maxStep = 4;
@@ -366,7 +377,7 @@
         }
 
         function validateCurrentStep() {
-            switch (currentStep) {
+            switch(currentStep) {
                 case 1:
                     if (!selectedService) {
                         alert('Please select a service');
@@ -450,10 +461,7 @@
             for (let hour = 8; hour < 17; hour++) {
                 for (let minute = 0; minute < 60; minute += 30) {
                     const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                    const displayTime = new Date(`2023-01-01 ${timeStr}`).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                    const displayTime = new Date(`2023-01-01 ${timeStr}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     slots.push({
                         value: timeStr,
                         label: displayTime
@@ -485,32 +493,31 @@
             loading.style.display = 'block';
 
             fetch('/appointment/get-available-employees', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        service_id: selectedService.id,
-                        appointment_date: selectedDate
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    service_id: selectedService.id,
+                    appointment_date: selectedDate
                 })
-                .then(response => response.json())
-                .then(employees => {
-                    loading.style.display = 'none';
-                    container.innerHTML = '';
+            })
+            .then(response => response.json())
+            .then(employees => {
+                loading.style.display = 'none';
+                container.innerHTML = '';
 
-                    if (employees.length === 0) {
-                        container.innerHTML =
-                            '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> No healthcare providers available for this date.</div>';
-                        return;
-                    }
+                if (employees.length === 0) {
+                    container.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> No healthcare providers available for this date.</div>';
+                    return;
+                }
 
-                    employees.forEach(employee => {
-                        const employeeCard = document.createElement('div');
-                        employeeCard.className = 'employee-card';
-                        employeeCard.dataset.employeeId = employee.id;
-                        employeeCard.innerHTML = `
+                employees.forEach(employee => {
+                    const employeeCard = document.createElement('div');
+                    employeeCard.className = 'employee-card';
+                    employeeCard.dataset.employeeId = employee.id;
+                    employeeCard.innerHTML = `
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">${employee.name}</h6>
@@ -521,16 +528,15 @@
                             </div>
                         </div>
                     `;
-                        employeeCard.onclick = () => selectEmployee(employeeCard, employee);
-                        container.appendChild(employeeCard);
-                    });
-                })
-                .catch(error => {
-                    loading.style.display = 'none';
-                    container.innerHTML =
-                        '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error loading healthcare providers.</div>';
-                    console.error('Error:', error);
+                    employeeCard.onclick = () => selectEmployee(employeeCard, employee);
+                    container.appendChild(employeeCard);
                 });
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                container.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error loading healthcare providers.</div>';
+                console.error('Error:', error);
+            });
         }
 
         function selectEmployee(element, employee) {
@@ -596,4 +602,5 @@
         // Initialize
         updateButtonVisibility();
     </script>
-@endsection
+</body>
+</html>

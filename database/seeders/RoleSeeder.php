@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     {
         //
 
-        $roles = ['Admin', 'Patient', 'Employee'];
+        $roles = ['Admin', 'Patient', 'Employee', 'Doctor'];
 
         foreach ($roles as $role) {
             Role::create([
@@ -40,5 +40,9 @@ class RoleSeeder extends Seeder
         $staff = User::where('email', 'employee@email.com')->first();
         $staffRole = Role::where('name', 'Employee')->first();
         $staff->assignRole($staffRole);
+
+        $doctor = User::where('email', 'doctor@email.com')->first();
+        $doctorRole = Role::where('name', 'Doctor')->first();
+        $doctor->assignRole($staffRole);
     }
 }

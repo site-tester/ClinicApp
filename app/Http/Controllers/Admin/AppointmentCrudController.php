@@ -49,6 +49,14 @@ class AppointmentCrudController extends CrudController
         }
     }
 
+    public function showBookingForm()
+    {
+        $services = Service::all();
+        $user     = auth()->user();
+
+        return view('appointments.index', compact('services', 'user'));
+    }
+
     /**
      * Define what happens when the List operation is loaded.
      *

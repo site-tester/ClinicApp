@@ -21,5 +21,9 @@
     <x-backpack::menu-dropdown-item title="Category" icon="la la-tags" :link="backpack_url('inventory-category')" />
     <x-backpack::menu-dropdown-item title="Stock History" icon="la la-history" :link="backpack_url('inventory-movements')" />
 </x-backpack::menu-dropdown>
-
-<x-backpack::menu-item title="Appointments" icon="la la-question" :link="backpack_url('appointment')" />
+<x-backpack::menu-dropdown title="Appointment" icon="la la-boxes">
+    <x-backpack::menu-dropdown-header title="Appointments" />
+    <x-backpack::menu-dropdown-item title="Book Now" icon="la la-plus" :link="backpack_url('appointment/book')" />
+    {{-- <x-backpack::menu-dropdown-item title="Create Appointment" icon="la la-plus" :link="backpack_url('appointment/create')" /> --}}
+    <x-backpack::menu-dropdown-item title="Lists" icon="la la-list" :link="backpack_url('appointment')" />
+</x-backpack::menu-dropdown>

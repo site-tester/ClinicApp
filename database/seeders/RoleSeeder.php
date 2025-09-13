@@ -19,7 +19,7 @@ class RoleSeeder extends Seeder
         $roles = ['Admin', 'Patient', 'Employee', 'Doctor'];
 
         foreach ($roles as $role) {
-            Role::create([
+            Role::firstOrCreate([
                 'name' => $role,
                 'guard_name' => 'web',
             ]);
@@ -43,6 +43,21 @@ class RoleSeeder extends Seeder
 
         $doctor = User::where('email', 'doctor@email.com')->first();
         $doctorRole = Role::where('name', 'Doctor')->first();
-        $doctor->assignRole($staffRole);
+        $doctor->assignRole($doctorRole);
+
+        // Assign roles to additional employees created by TimeSlotSeeder
+        $additionalEmployees = [
+            'dr.santos@email.com' => 'Doctor',
+            'nurse.jennifer@email.com' => 'Employee',
+            'therapist.mark@email.com' => 'Employee',
+        ];
+
+        foreach ($additionalEmployees as $email => $roleName) {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $role = Role::where('name', $roleName)->first();
+                $user->assignRole($role);
+            }
+        }
     }
 }

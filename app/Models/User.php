@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Appointment;
 use App\Models\EmployeeSchedule;
+use App\Models\EmployeeProfile;
 use App\Models\PatientProfile;
 
 class User extends Authenticatable
@@ -75,5 +76,11 @@ class User extends Authenticatable
     public function patientProfile()
     {
         return $this->hasOne(PatientProfile::class);
+    }
+
+// Employee profile relationship
+    public function employee_profile()
+    {
+        return $this->hasOne(EmployeeProfile::class, 'employee_id');
     }
 }

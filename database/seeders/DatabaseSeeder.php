@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             PageSeeder::class,
             ServiceSeeder::class,
+            EmployeeScheduleSeeder::class,
         ]);
 
     }

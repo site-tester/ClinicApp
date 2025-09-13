@@ -60,13 +60,13 @@
                     </li>
                     {{-- @endif --}}
                 @else
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropstart">
                         <a class="nav-link text-black dropdown-toggle mx-2" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" v-pre>
                             {{ Auth::user()->name }}
                         </a>
 
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu">
                             @hasanyrole('Admin|Staff|Doctor', 'backpack')
                                 <li class="dropdown-item text-center">
                                     <a class="btn btn-success text-nowrap fw-bolder mx-2"
@@ -88,14 +88,14 @@
                             <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{{ route('patient.logout') }}"
+                        <a class="dropdown-item" href="#"
                             onclick="event.preventDefault();
                                                     document.getElementById('logout-form').submit();">
                             <i class="bi bi-box-arrow-right"></i>&nbsp;
                             {{ __('Logout') }}
                         </a>
                     </li>
-                    <form id="logout-form" action="{{ route('patient.logout') }}" method="POST" class="d-none">
+                    <form id="logout-form" action="{{ url('admin/logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
                 </ul>

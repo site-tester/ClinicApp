@@ -33,9 +33,12 @@
         }
 
         .sidebar {
-            min-height: 93.4vh;
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
             background: linear-gradient(180deg, var(--primary-color) 0%, #0056b3 100%);
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
         .sidebar .nav-link {
@@ -141,13 +144,91 @@
             padding: 15px 20px;
         }
 
+        /* Mobile Navigation Styles */
+        .offcanvas .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 12px 20px;
+            margin: 2px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .offcanvas .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .offcanvas .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
                 min-height: auto;
+                position: static;
             }
 
             .main-content {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                margin-bottom: 20px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
                 padding: 10px;
+            }
+
+            .welcome-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .card-header {
+                padding: 12px 15px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Ensure proper scrolling */
+        .main-content {
+            min-height: calc(100vh - 76px);
+        }
+
+        /* Fix for mobile sidebar */
+        @media (max-width: 767.98px) {
+            .offcanvas {
+                width: 280px !important;
             }
         }
     </style>
@@ -170,7 +251,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropstart">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-1"></i>{{ auth()->user()->name }}
@@ -183,7 +264,7 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form method="POST" action="{{ backpack_url('logout') }}" style="display: inline;">
+                                <form method="POST" action="{{ url('admin/logout') }}" style="display: inline;">
                                     @csrf
                                     <button type="submit" class="dropdown-item">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -197,10 +278,10 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid px-0">
+        <div class="row g-0">
             <!-- Sidebar -->
-            <div class="col-lg-2 col-md-3 p-0">
+            <div class="col-lg-2 col-md-3 d-none d-md-block">
                 <div class="sidebar">
                     <nav class="nav flex-column pt-4">
                         <a class="nav-link {{ request()->routeIs('patient.dashboard') ? 'active' : '' }}"
@@ -215,6 +296,49 @@
                             href="{{ route('patient.book-appointment') }}">
                             <i class="fas fa-plus-circle me-2"></i>Book Appointment
                         </a>
+                        <a class="nav-link {{ request()->routeIs('patient.payments*') ? 'active' : '' }}"
+                            href="{{ route('patient.payments.index') }}">
+                            <i class="fas fa-receipt me-2"></i>Payments
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('patient.profile') ? 'active' : '' }}"
+                            href="{{ route('patient.profile') }}">
+                            <i class="fas fa-user-edit me-2"></i>My Profile
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Mobile Sidebar Toggle -->
+            <div class="d-md-none">
+                <button class="btn btn-primary position-fixed" style="top: 80px; left: 10px; z-index: 1050;" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Sidebar -->
+            <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="mobileSidebar">
+                <div class="offcanvas-header" style="background: linear-gradient(180deg, var(--primary-color) 0%, #0056b3 100%); color: white;">
+                    <h5 class="offcanvas-title">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body" style="background: linear-gradient(180deg, var(--primary-color) 0%, #0056b3 100%);">
+                    <nav class="nav flex-column">
+                        <a class="nav-link {{ request()->routeIs('patient.dashboard') ? 'active' : '' }}"
+                            href="{{ route('patient.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('patient.appointments*') ? 'active' : '' }}"
+                            href="{{ route('patient.appointments') }}">
+                            <i class="fas fa-calendar-check me-2"></i>My Appointments
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('patient.book-appointment') ? 'active' : '' }}"
+                            href="{{ route('patient.book-appointment') }}">
+                            <i class="fas fa-plus-circle me-2"></i>Book Appointment
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('patient.payments*') ? 'active' : '' }}"
+                            href="{{ route('patient.payments.index') }}">
+                            <i class="fas fa-receipt me-2"></i>Payments
+                        </a>
                         <a class="nav-link {{ request()->routeIs('patient.profile') ? 'active' : '' }}"
                             href="{{ route('patient.profile') }}">
                             <i class="fas fa-user-edit me-2"></i>My Profile
@@ -224,7 +348,7 @@
             </div>
 
             <!-- Main Content -->
-            <div class="col-lg-10 col-md-9">
+            <div class="col-lg-10 col-md-9 col-12">
                 <div class="main-content">
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -240,7 +364,21 @@
                         </div>
                     @endif
 
-                    @if ($errors->any())
+                    @if (session('warning'))
+                        <div class="alert alert-warning alert-dismissible fade show">
+                            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('warning') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    @if (session('info'))
+                        <div class="alert alert-info alert-dismissible fade show">
+                            <i class="fas fa-info-circle me-2"></i>{{ session('info') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    {{-- @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <ul class="mb-0">
@@ -250,7 +388,7 @@
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    @endif
+                    @endif --}}
 
                     @yield('content')
                 </div>

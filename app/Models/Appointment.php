@@ -21,8 +21,11 @@ class Appointment extends Model
         'employee_id',
         'service_id',
         'appointment_datetime',
+        'end_time',
         'duration_in_minutes',
         'status',
+        'purpose',
+        'type',
         'patient_notes',
         'employee_notes',
     ];
@@ -34,6 +37,7 @@ class Appointment extends Model
      */
     protected $casts = [
         'appointment_datetime' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     /**
@@ -58,6 +62,14 @@ class Appointment extends Model
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    /**
+     * Get the payments for the appointment.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'appointment_id');
     }
 
 }

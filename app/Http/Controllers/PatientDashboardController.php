@@ -79,7 +79,7 @@ class PatientDashboardController extends Controller
 
         $appointments = Appointment::where('patient_id', $user->id)
             ->orderBy('appointment_datetime', 'desc')
-            ->with(['service', 'employee'])
+            ->with(['service', 'employee', 'payments'])
             ->paginate(10);
 
         return view('patient.appointments', compact('appointments', 'user'));
@@ -147,7 +147,7 @@ class PatientDashboardController extends Controller
         $date = Carbon::parse($request->appointment_date);
         $dayOfWeek = $date->dayOfWeekIso;
 
-        $availableEmployees = User::role('employee')
+        $availableEmployees = User::role(['Employee', 'Doctor'], 'web')
             ->whereHas('schedules', function ($query) use ($dayOfWeek) {
                 $query->where('day_of_week', $dayOfWeek);
             })

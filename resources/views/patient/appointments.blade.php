@@ -23,6 +23,7 @@
                             <th>Duration</th>
                             <th>Status</th>
                             <th>Notes</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,6 +46,29 @@
                                     <small>{{ Str::limit($appointment->patient_notes, 50) }}</small>
                                 @else
                                     <small class="text-muted">No notes</small>
+                                @endif
+                            </td>
+                            <td>
+                                @if($appointment->status === 'scheduled')
+                                    @php
+                                        $hasPayment = $appointment->payments()->where('status', 'completed')->exists();
+                                    @endphp
+                                    @if(!$hasPayment)
+                                        <a href="{{ route('patient.payments.create', ['appointment_id' => $appointment->id]) }}"
+                                           class="btn btn-sm btn-success">
+                                            <i class="fas fa-credit-card me-1"></i>Pay Now
+                                        </a>
+                                    @else
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Paid
+                                        </span>
+                                    @endif
+                                @elseif($appointment->status === 'completed')
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-check-circle me-1"></i>Completed
+                                    </span>
+                                @else
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                         </tr>

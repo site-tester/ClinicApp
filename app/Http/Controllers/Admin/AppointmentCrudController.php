@@ -166,7 +166,7 @@ class AppointmentCrudController extends CrudController
                 'model'     => 'App\Models\User',
                 'attribute' => 'name',
                 'options'   => (function ($query) {
-                    return $query->role('employee')->get();
+                    return $query->role('employee', 'web')->get();
                 }),
             ]);
 
@@ -205,7 +205,7 @@ class AppointmentCrudController extends CrudController
                 'model'     => 'App\Models\User',
                 'attribute' => 'name',
                 'options'   => (function ($query) {
-                    return $query->role('Patient')->get();
+                    return $query->role('Patient', 'web')->get();
                 }),
             ]);
 
@@ -217,7 +217,7 @@ class AppointmentCrudController extends CrudController
                 'model'     => 'App\Models\User',
                 'attribute' => 'name',
                 'options'   => (function ($query) {
-                    return $query->role('employee')->get();
+                    return $query->role('employee', 'web')->get();
                 }),
             ]);
 

@@ -51,11 +51,11 @@ class AppointmentBookingController extends Controller
             $dayOfWeek = $date->dayOfWeekIso; // 1 for Monday, 7 for Sunday
 
             // Find employees with a schedule on the selected day
-            $availableEmployees = User::role('employee')
-                ->whereHas('employee_schedules', function ($query) use ($dayOfWeek) {
+            $availableEmployees = User::role(['Employee', 'Doctor'], 'web')
+                ->whereHas('schedules', function ($query) use ($dayOfWeek) {
                     $query->where('day_of_week', $dayOfWeek);
                 })
-                ->with(['employee_profile', 'employee_schedules' => function ($query) use ($dayOfWeek) {
+                ->with(['employee_profile', 'schedules' => function ($query) use ($dayOfWeek) {
                     $query->where('day_of_week', $dayOfWeek);
                 }])
                 ->get()
@@ -65,7 +65,7 @@ class AppointmentBookingController extends Controller
                         'name'     => $employee->name,
                         'email'    => $employee->email,
                         'position' => $employee->employee_profile->position ?? 'Healthcare Provider',
-                        'schedule' => $employee->employee_schedules->first(),
+                        'schedule' => $employee->schedules->first(),
                     ];
                 });
 
@@ -98,7 +98,7 @@ class AppointmentBookingController extends Controller
             $dayOfWeek = $date->dayOfWeekIso;
 
             // Get employee's schedule for the day
-            $schedule = $employee->employee_schedules()->where('day_of_week', $dayOfWeek)->first();
+            $schedule = $employee->schedules()->where('day_of_week', $dayOfWeek)->first();
 
             if (! $schedule) {
                 return response()->json(['error' => 'Employee not available on this day.'], 404);
@@ -205,7 +205,7 @@ class AppointmentBookingController extends Controller
 
             // Verify employee is available at this time
             $dayOfWeek        = $appointmentDateTime->dayOfWeekIso;
-            $employeeSchedule = $employee->employee_schedules()
+            $employeeSchedule = $employee->schedules()
                 ->where('day_of_week', $dayOfWeek)
                 ->first();
 

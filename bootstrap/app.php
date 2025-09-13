@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // $middleware->redirectGuestsTo(fn() => route('backpack.auth.login'));
 
+        // Apply redirect.patient middleware to web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\RedirectPatientMiddleware::class,
+        ]);
+
         // Middleware aliases
         $middleware->alias([
             'auth'               => \Illuminate\Auth\Middleware\Authenticate::class,
@@ -41,6 +46,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Custom middleware
             'redirect.patient'   => RedirectPatientMiddleware::class,
+
+            //Payment middleware
+            'payment.owner' => \App\Http\Middleware\PaymentOwnershipMiddleware::class,
         ]);
 
     })

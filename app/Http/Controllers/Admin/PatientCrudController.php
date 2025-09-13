@@ -107,7 +107,7 @@ class PatientCrudController extends CrudController
             'attribute' => 'name',
 
             'options'   => (function ($query) {
-                $users = $query->role('Patient')->doesntHave('patientProfile')->get();
+                $users = $query->role('Patient', 'web')->doesntHave('patientProfile')->get();
                 return $users->pluck('name', 'id');
             }),
             'hint'      => 'Select a registered user that does not have a profile yet',

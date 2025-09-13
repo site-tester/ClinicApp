@@ -52,6 +52,7 @@
                                 <select name="employee_id" id="employee_id"
                                     class="form-select @error('employee_id') is-invalid @enderror" required disabled>
                                     <option value="">Select service and date first</option>
+                                    <option value="5">Clinic Doctor</option>
                                 </select>
                                 @error('employee_id')
                                     <div class="invalid-feedback">{{ $message }}</div>

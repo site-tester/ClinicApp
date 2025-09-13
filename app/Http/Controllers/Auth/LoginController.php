@@ -23,7 +23,7 @@ class LoginController extends BackpackLoginController
 
         if ($user && $user->hasRole('Patient')) {
             // redirect patients to patient dashboard
-            return redirect()->intended(route('patient.dashboard'));
+            return redirect(route('patient.dashboard'));
         }
 
         // For admin/staff users, redirect to admin dashboard

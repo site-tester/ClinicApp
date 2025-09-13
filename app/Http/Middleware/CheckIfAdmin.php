@@ -27,8 +27,8 @@ class CheckIfAdmin
      */
     private function checkIfUserIsAdmin($user)
     {
-        // return ($user->is_admin == 1);
-        return true;
+        // Check if user has Admin, Employee, or Doctor role
+        return $user && ($user->hasRole('Admin', 'web') || $user->hasRole('Employee', 'web') || $user->hasRole('Doctor', 'web'));
     }
 
     /**
